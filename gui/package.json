@@ -1,0 +1,13 @@
+{
+  "name": "prism-gui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prism desktop UI — visual shell, calls the prism CLI for real data.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

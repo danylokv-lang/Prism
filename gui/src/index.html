@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Prism</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">◆</div>
+    <div class="brand-text">
+      <span class="brand-name">Prism</span>
+      <span class="brand-version">v0.3.0</span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-item active" data-view="scan">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+      <div class="nav-labels"><span class="nav-title">Project Scan</span><span class="nav-subtitle">Analysis</span></div>
+    </div>
+    <div class="nav-item" data-view="explain">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 15h.01M12 15c.3-.5.9-.8 1.5-.6"/></svg>
+      <div class="nav-labels"><span class="nav-title">Explain</span><span class="nav-subtitle">Codebase Q&amp;A</span></div>
+    </div>
+    <div class="nav-item" data-view="env">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg>
+      <div class="nav-labels"><span class="nav-title">Env</span><span class="nav-subtitle">Environment</span></div>
+    </div>
+    <div class="nav-item" data-view="recipes">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <div class="nav-labels"><span class="nav-title">Recipes</span><span class="nav-subtitle">Automation</span></div>
+    </div>
+    <div class="nav-item" data-view="sessions">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <div class="nav-labels"><span class="nav-title">Sessions</span><span class="nav-subtitle">History &amp; Logs</span></div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="project-card">
+      <span class="project-dot"></span>
+      <div class="project-meta">
+        <span class="project-name">prism</span>
+        <span class="project-sub">Python · CLI</span>
+      </div>
+    </div>
+    <div class="user-row">
+      <div class="user-avatar">DK</div>
+      <div class="user-meta">
+        <span class="user-name">danylo</span>
+        <span class="user-tag">Local</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="content">
+
+    <!-- Project Scan -->
+    <section class="view active" id="view-scan">
+      <div class="breadcrumb">Project Scan / <b>Full Scan</b></div>
+
+      <div class="command-line mono"><span class="accent">&gt;</span> prism scan --deep --follow-deps</div>
+
+      <div class="terminal mono">
+        <div><span class="t">10:42:11</span><span class="pending">▶</span>Initializing scan engine</div>
+        <div><span class="t">10:42:11</span><span class="ok">✓</span>Loaded configuration <span class="tag">pyproject.toml</span></div>
+        <div><span class="t">10:42:12</span><span class="pending">▶</span>Discovering codebase structure</div>
+        <div><span class="t">10:42:13</span><span class="ok">✓</span>Found <span class="count">214</span> files ( Python <span class="count">142</span>  TOML <span class="count">3</span>  Markdown <span class="count">2</span>  Other <span class="count">67</span> )</div>
+        <div><span class="t">10:42:14</span><span class="pending">▶</span>Analyzing dependencies</div>
+        <div><span class="t">10:42:16</span><span class="ok">✓</span>Resolved <span class="count">9</span> packages ( <span class="warn-icon">0 vulnerabilities</span> )</div>
+        <div><span class="t">10:42:17</span><span class="pending">▶</span>Building code graph</div>
+        <div><span class="t">10:42:22</span><span class="ok">✓</span>Code graph ready ( <span class="count">38</span> nodes  <span class="count">61</span> edges )</div>
+        <div><span class="t">10:42:23</span><span class="pending">▶</span>Running quality checks</div>
+        <div><span class="t">10:42:28</span><span class="warn-icon">⚠</span><span class="tag">4 issues detected</span> ( 1 high  2 medium  1 low )</div>
+        <div><span class="t">10:42:29</span><span class="pending">▶</span>Generating insights</div>
+        <div><span class="t">10:42:31</span><span class="ok">✓</span>Scan complete ( <span class="count">5.1s</span> )</div>
+      </div>
+
+      <div class="panel panel-accent">
+        <div class="panel-title"><span>✦</span> AI SUMMARY <span class="badge">BETA</span></div>
+        <div class="summary-text">
+          The codebase is a small, well-organized Typer/Rich CLI with clear command/core separation.
+          A few things stood out:
+        </div>
+        <ul class="bullet-list">
+          <li>Provider abstraction in <span class="mono">llm.py</span> is doing double duty as both config and transport — could split.</li>
+          <li>No automated tests yet for <span class="mono">core/detect.py</span> or <span class="mono">core/tools.py</span>.</li>
+          <li><span class="mono">explain.py</span> reads full file contents into memory — fine at current scale, worth a cap later.</li>
+          <li>Config secrets are stored in plaintext TOML (chmod 600) — acceptable for a local tool, worth documenting.</li>
+        </ul>
+        <a class="see-details">See details →</a>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title" style="color: var(--warn);">⚠ TOP ISSUES</div>
+        <div class="issues-list">
+          <div class="issue-row">
+            <span class="issue-index">1</span>
+            <span class="severity high">High</span>
+            <span class="issue-text">No test suite — <span class="path">tests/</span> directory doesn't exist yet</span>
+          </div>
+          <div class="issue-row">
+            <span class="issue-index">2</span>
+            <span class="severity medium">Medium</span>
+            <span class="issue-text">Plaintext API keys in <span class="path">~/.prism/config.toml</span></span>
+          </div>
+          <div class="issue-row">
+            <span class="issue-index">3</span>
+            <span class="severity medium">Medium</span>
+            <span class="issue-text">Unbounded file read in <span class="path">commands/explain.py:38</span></span>
+          </div>
+        </div>
+        <div class="view-all">View all issues (4) →</div>
+      </div>
+
+      <div class="command-bar mono">
+        <span class="accent">&gt;</span>
+        <input type="text" placeholder="Type a command or ask anything..." />
+        <span class="kbd">⌘K</span>
+        <div class="send-btn">→</div>
+      </div>
+    </section>
+
+    <!-- Explain -->
+    <section class="view" id="view-explain">
+      <div class="breadcrumb">Explain / <b>Codebase Q&amp;A</b></div>
+      <div class="qa-thread">
+        <div class="qa-bubble user">What does core/symbols.py do?</div>
+        <div class="qa-bubble ai">It extracts top-level function and class names from a file without calling an LLM — AST for Python, regex heuristics for everything else. Used by <span class="mono">prism explain</span> to show real symbols before the AI narrative.</div>
+      </div>
+      <div class="command-bar mono">
+        <span class="accent">&gt;</span>
+        <input type="text" placeholder="Ask about this codebase..." />
+        <span class="kbd">⌘K</span>
+        <div class="send-btn">→</div>
+      </div>
+    </section>
+
+    <!-- Env -->
+    <section class="view" id="view-env">
+      <div class="breadcrumb">Environment / <b>Tool Audit</b></div>
+      <div class="env-table mono">
+        <div class="env-row head"><span></span><span>Tool</span><span>Version</span><span>Notes</span></div>
+        <div class="env-row"><span class="env-ok">✓</span><span>git</span><span>2.50.1</span><span></span></div>
+        <div class="env-row"><span class="env-ok">✓</span><span>python3</span><span>3.9.6</span><span>required by this project</span></div>
+        <div class="env-row"><span class="env-ok">✓</span><span>node</span><span>25.8.1</span><span></span></div>
+        <div class="env-row"><span class="env-missing">·</span><span>rustc</span><span>not found</span><span>not used here</span></div>
+        <div class="env-row"><span class="env-ok">✓</span><span>docker</span><span>29.3.1</span><span></span></div>
+      </div>
+    </section>
+
+    <!-- Recipes -->
+    <section class="view" id="view-recipes">
+      <div class="breadcrumb">Recipes / <b>Automation</b></div>
+      <div class="placeholder">
+        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <h2>No recipes saved yet</h2>
+        <p>Save the current project's stack, structure, and config as a recipe, then apply it to bootstrap new projects with the same setup.</p>
+        <button class="primary-btn">Save current setup as recipe</button>
+      </div>
+    </section>
+
+    <!-- Sessions -->
+    <section class="view" id="view-sessions">
+      <div class="breadcrumb">Sessions / <b>History &amp; Logs</b></div>
+      <div class="placeholder">
+        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <h2>No sessions yet</h2>
+        <p>Every scan, explain, and debug run will show up here so you can revisit past output without re-running the command.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- AI Context (only meaningful for Project Scan) -->
+  <aside class="ai-context" id="ai-context">
+    <div class="ai-context-header">AI CONTEXT <span class="badge">BETA</span></div>
+
+    <div class="panel">
+      <div class="metric-row">
+        <span class="lead">Scan Summary</span>
+        <span>214 files analyzed in 5.1s</span>
+        <span>0 dependency vulnerabilities</span>
+        <span>4 code issues found</span>
+        <span>Main language: Python</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="metric-row">
+        <span class="lead">Key Insights</span>
+      </div>
+      <ul class="bullet-list">
+        <li>No test suite present</li>
+        <li>Secrets stored in plaintext config</li>
+        <li>Provider abstraction doing two jobs</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <div class="metric-row" style="margin-bottom: 4px;"><span class="lead">Suggested Actions</span></div>
+      <div class="action-btn">🧪 Add a test suite <span class="chev">›</span></div>
+      <div class="action-btn">🔒 Review config security <span class="chev">›</span></div>
+      <div class="action-btn">🧹 Split provider abstraction <span class="chev">›</span></div>
+    </div>
+
+    <div>
+      <div class="metric-row" style="margin-bottom: 8px;"><span class="lead">Ask Prism anything…</span></div>
+      <div class="chip-row">
+        <div class="chip">Explain this module</div>
+        <div class="chip">Why is this slow?</div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script src="renderer.js"></script>
+</body>
+</html>

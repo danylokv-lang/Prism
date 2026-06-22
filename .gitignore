@@ -6,3 +6,5 @@ venv/
 dist/
 build/
 .DS_Store
+gui/node_modules/
+gui/dist/
