@@ -7,6 +7,7 @@ from pathlib import Path
 
 from rich.table import Table
 from rich.panel import Panel
+from rich.markdown import Markdown
 
 from prism import llm
 from prism.core.detect import detect_project
@@ -64,9 +65,17 @@ def run(path: Path) -> None:
 
 def _narrative_prompt(summary) -> str:
     return (
-        "You are Prism, a terse project-intelligence assistant. Given this "
-        "project metadata, write a 3-5 sentence plain-English architecture "
-        "summary a new contributor would find useful. Be concrete, no fluff.\n\n"
+        "You are Prism, a project-intelligence assistant explaining a codebase "
+        "to a complete beginner who may be new to programming. Do not write one "
+        "dense paragraph. Structure your answer as short labeled sections, each "
+        "1-2 short sentences, using this exact format:\n\n"
+        "**What this is** — plain-language summary, no jargon.\n"
+        "**Where to look** — which folders/files matter and what's in them.\n"
+        "**How it fits together** — how the pieces connect.\n"
+        "**What to do next** — one concrete first step for someone new to this project.\n\n"
+        "If you must use a technical term, briefly define it in parentheses the "
+        "first time you use it. Be concrete and specific to this project, no "
+        "generic filler.\n\n"
         f"Project types: {summary.project_types}\n"
         f"Tech stack: {summary.tech_stack}\n"
         f"Key files: {summary.key_files}\n"
@@ -80,7 +89,7 @@ def _print_narrative(summary) -> None:
         narrative = llm.generate(_narrative_prompt(summary))
 
     if narrative:
-        console.print(Panel(narrative, title="AI Summary", border_style="cyan"))
+        console.print(Panel(Markdown(narrative), title="AI Summary", border_style="cyan"))
     else:
         warn(
             "No AI provider configured or reachable. Run `prism setup` to enable "

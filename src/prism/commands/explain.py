@@ -9,6 +9,7 @@ from pathlib import Path
 
 from rich.table import Table
 from rich.panel import Panel
+from rich.markdown import Markdown
 
 from prism import llm
 from prism.core.detect import IGNORE_DIRS, KEY_FILE_ROLES
@@ -155,10 +156,16 @@ def _explain_folder(path: Path) -> None:
 
 def _file_prompt(path: Path, text: str, symbols: list[str], refs: list[str]) -> str:
     prompt = (
-        "You are Prism, a terse code-explanation assistant. Given this file's "
-        "path, symbols, and content, explain in 3-5 sentences: what it does, "
-        "why it likely exists, and how it connects to the rest of the project. "
-        "Be concrete, no fluff, no restating the obvious file name.\n\n"
+        "You are Prism, explaining a code file to a complete beginner who may "
+        "be new to programming. Do not write one dense paragraph. Structure "
+        "your answer as short labeled sections, each 1-2 short sentences, "
+        "using this exact format:\n\n"
+        "**What this does** — plain-language summary, no jargon.\n"
+        "**Why it exists** — the problem it solves.\n"
+        "**How it connects** — what calls it or what it depends on.\n\n"
+        "If you must use a technical term, briefly define it in parentheses "
+        "the first time you use it. Be concrete and specific to this file, no "
+        "generic filler, no restating the obvious file name.\n\n"
         f"Path: {path}\n"
         f"Top-level symbols: {symbols}\n"
         f"Referenced by: {refs}\n\n"
@@ -171,10 +178,16 @@ def _file_prompt(path: Path, text: str, symbols: list[str], refs: list[str]) -> 
 
 def _folder_prompt(path: Path, subdirs: list[str], files: list[str]) -> str:
     return (
-        "You are Prism, a terse code-explanation assistant. Given this "
-        "folder's name and contents, explain in 2-4 sentences what role this "
-        "folder likely plays in the project's architecture. Be concrete, no "
-        "fluff.\n\n"
+        "You are Prism, explaining a project folder to a complete beginner "
+        "who may be new to programming. Do not write one dense paragraph. "
+        "Structure your answer as short labeled sections, each 1-2 short "
+        "sentences, using this exact format:\n\n"
+        "**What this is** — plain-language summary, no jargon.\n"
+        "**What's inside** — what the files/subfolders are for.\n"
+        "**How it fits together** — its role in the wider project.\n\n"
+        "If you must use a technical term, briefly define it in parentheses "
+        "the first time you use it. Be concrete and specific, no generic "
+        "filler.\n\n"
         f"Folder: {path.name}\n"
         f"Subfolders: {subdirs}\n"
         f"Files: {files}\n"
@@ -186,6 +199,6 @@ def _print_narrative(prompt: str) -> None:
         narrative = llm.generate(prompt)
 
     if narrative:
-        console.print(Panel(narrative, title="AI Explanation", border_style="cyan"))
+        console.print(Panel(Markdown(narrative), title="AI Explanation", border_style="cyan"))
     else:
         warn("No AI provider configured or reachable. Run `prism setup` to enable explanations.")

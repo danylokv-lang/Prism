@@ -10,6 +10,33 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function inlineMarkdown(escapedText) {
+  return escapedText.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+// Renders the "**Label** — body" structured AI narrative into labeled
+// sections instead of one dense paragraph. Falls back to a plain paragraph
+// for any text that doesn't match the expected shape.
+function renderNarrative(text) {
+  if (!text) return "";
+  const sectionPattern = /^\*\*(.+?)\*\*\s*[—-]\s*([\s\S]*)$/;
+
+  return text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((para) => {
+      const match = para.match(sectionPattern);
+      if (match) {
+        const label = escapeHtml(match[1]);
+        const body = inlineMarkdown(escapeHtml(match[2]));
+        return `<div class="ai-section"><div class="ai-section-label">${label}</div><div class="ai-section-body">${body}</div></div>`;
+      }
+      return `<p class="ai-paragraph">${inlineMarkdown(escapeHtml(para))}</p>`;
+    })
+    .join("");
+}
+
 function switchView(target) {
   navItems.forEach((n) => n.classList.toggle("active", n.dataset.view === target));
   views.forEach((v) => v.classList.toggle("active", v.id === `view-${target}`));
@@ -88,9 +115,13 @@ function renderScanResult(data) {
         <span>${escapeHtml(languages)}</span>
       </div>
     </div>
-    <div class="panel panel-accent">
-      <div class="panel-title"><span>✦</span> AI SUMMARY <span class="badge">BETA</span></div>
-      <div class="summary-text">${data.ai_summary ? escapeHtml(data.ai_summary) : "No AI provider configured. Run `prism setup` in a terminal to enable AI summaries."}</div>
+    <div class="panel panel-accent panel-summary">
+      <div class="panel-title panel-title-lg"><span>✦</span> AI Summary <span class="badge">BETA</span></div>
+      <div class="ai-narrative">
+        ${data.ai_summary
+          ? renderNarrative(data.ai_summary)
+          : '<p class="ai-paragraph">No AI provider configured. Run <code>prism setup</code> in a terminal to enable AI summaries.</p>'}
+      </div>
     </div>
     ${Object.keys(data.key_files || {}).length ? `
     <div class="panel">
@@ -174,20 +205,21 @@ async function runExplain() {
   const fullPath = `${currentProject}/${query}`.replace(/\/{2,}/g, "/");
   const result = await window.prismAPI.explain(fullPath);
 
-  let answer;
+  let answerHtml;
   if (!result.ok) {
-    answer = `Error: ${result.error}`;
+    answerHtml = `<p class="ai-paragraph">Error: ${escapeHtml(result.error)}</p>`;
   } else if (result.data.error) {
-    answer = result.data.error;
-  } else if (result.data.kind === "file") {
-    const symbolList = (result.data.symbols || []).join(", ") || "none found";
-    const explanation = result.data.ai_explanation || "No AI provider configured — run 'prism setup' in a terminal.";
-    answer = `${explanation}\n\nSymbols: ${symbolList}`;
+    answerHtml = `<p class="ai-paragraph">${escapeHtml(result.data.error)}</p>`;
   } else {
-    answer = result.data.ai_explanation || "No AI provider configured — run 'prism setup' in a terminal.";
+    const fallback = "No AI provider configured — run <code>prism setup</code> in a terminal.";
+    const explanationHtml = result.data.ai_explanation ? renderNarrative(result.data.ai_explanation) : `<p class="ai-paragraph">${fallback}</p>`;
+    const symbolsHtml = result.data.kind === "file"
+      ? `<p class="ai-meta">Symbols: ${escapeHtml((result.data.symbols || []).join(", ") || "none found")}</p>`
+      : "";
+    answerHtml = explanationHtml + symbolsHtml;
   }
 
-  explainThread.innerHTML += `<div class="qa-bubble ai">${escapeHtml(answer)}</div>`;
+  explainThread.innerHTML += `<div class="qa-bubble ai">${answerHtml}</div>`;
   explainThread.scrollTop = explainThread.scrollHeight;
 }
 
