@@ -2,7 +2,17 @@
 
 A local AI-powered project intelligence layer for developers.
 
-## Install (dev)
+## Install
+
+Global, works from any directory (recommended):
+
+```bash
+brew install pipx
+pipx ensurepath
+pipx install --editable .
+```
+
+Local dev venv instead:
 
 ```bash
 python3 -m venv .venv
