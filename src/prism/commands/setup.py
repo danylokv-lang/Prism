@@ -23,7 +23,8 @@ QSTYLE = Style(
 )
 
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"
-DEFAULT_OLLAMA_MODEL = "llama3.1"
+DEFAULT_OLLAMA_MODEL = "llama3.2:1b"
+RECOMMENDED_SMALL_MODEL = "llama3.2:1b"
 
 
 def _describe_current(config: dict) -> str | None:
@@ -137,13 +138,16 @@ def _setup_ollama(config: dict, running: bool, models: list[str]) -> None:
         err("Ollama isn't reachable at localhost:11434.")
         console.print(
             "  [prism.dim]→[/prism.dim] install: curl -fsSL https://ollama.com/install.sh | sh\n"
-            "  [prism.dim]→[/prism.dim] then run: ollama serve  &  ollama pull llama3.2"
+            f"  [prism.dim]→[/prism.dim] then run: ollama serve  &  ollama pull {RECOMMENDED_SMALL_MODEL}"
         )
         return
 
     if not models:
         warn("Ollama is running but has no models pulled yet.")
-        console.print("  [prism.dim]→[/prism.dim] run: ollama pull llama3.2  (small, ~2GB, fast)")
+        console.print(
+            f"  [prism.dim]→[/prism.dim] run: ollama pull {RECOMMENDED_SMALL_MODEL}  "
+            "(~1.3GB, low memory, fast — good default for a CLI tool)"
+        )
         return
 
     previous = config["llm"].get("ollama_model")

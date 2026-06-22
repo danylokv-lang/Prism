@@ -10,6 +10,7 @@ from typer import rich_utils
 from prism.commands import scan as scan_cmd
 from prism.commands import env as env_cmd
 from prism.commands import setup as setup_cmd
+from prism.commands import explain as explain_cmd
 
 # Match Typer's --help/error styling to Prism's cyan theme instead of the
 # default red/yellow/magenta mix, which clashes with our own panels.
@@ -46,6 +47,14 @@ def env(
 ) -> None:
     """Audit your local dev environment against this project's requirements."""
     env_cmd.run(path)
+
+
+@app.command()
+def explain(
+    path: Path = typer.Argument(..., help="File or folder to explain."),
+) -> None:
+    """Explain what a file or folder does, why it exists, and how it connects."""
+    explain_cmd.run(path)
 
 
 @app.command()
