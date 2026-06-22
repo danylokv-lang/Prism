@@ -7,12 +7,23 @@
 </head>
 <body>
 
+<div class="cli-missing-banner" id="cli-missing-banner">
+  <div>
+    <strong>Prism CLI not found.</strong> The app needs the <code>prism</code> command-line tool installed to do anything.
+  </div>
+  <div class="cli-missing-actions">
+    <code id="cli-install-cmd">pipx install git+https://github.com/danylokv-lang/Prism.git</code>
+    <button id="cli-install-copy">Copy</button>
+  </div>
+</div>
+
+<div class="app-body">
 <aside class="sidebar">
   <div class="brand">
     <div class="brand-mark">◆</div>
     <div class="brand-text">
       <span class="brand-name">Prism</span>
-      <span class="brand-version">v0.3.0</span>
+      <span class="brand-version">v0.4.1</span>
     </div>
   </div>
 
@@ -155,6 +166,7 @@
       <div class="action-btn" data-nav="env">🌐 Audit environment <span class="chev">›</span></div>
     </div>
   </aside>
+</div>
 </div>
 
 <script src="renderer.js"></script>

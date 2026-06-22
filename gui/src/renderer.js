@@ -4,6 +4,23 @@ const aiContext = document.getElementById("ai-context");
 
 let currentProject = null;
 
+// ---------- First-run CLI detection ----------
+
+(async () => {
+  const available = await window.prismAPI.checkCli();
+  if (!available) {
+    document.getElementById("cli-missing-banner").classList.add("visible");
+  }
+})();
+
+document.getElementById("cli-install-copy").addEventListener("click", async () => {
+  const text = document.getElementById("cli-install-cmd").textContent;
+  await navigator.clipboard.writeText(text);
+  const btn = document.getElementById("cli-install-copy");
+  btn.textContent = "Copied";
+  setTimeout(() => (btn.textContent = "Copy"), 1500);
+});
+
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str ?? "";

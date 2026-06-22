@@ -4,12 +4,26 @@ Electron desktop shell for Prism. Calls the real `prism` CLI (must be
 installed and on PATH — see the repo root README) via IPC; no logic is
 duplicated here.
 
-## Run
+## Run (dev)
 
 ```bash
 npm install
 npm start
 ```
+
+## Build a downloadable .dmg
+
+```bash
+npm install
+npm run dist
+```
+
+Produces `release/Prism-<version>-arm64.dmg` — double-click, drag `Prism.app`
+to `Applications`, same install pattern as Claude/Cursor. The app still needs
+the `prism` CLI installed separately (it's a separate Python tool, not
+bundled) — if it's missing, the app shows a banner with the install command
+instead of failing silently. `build/icon.icns` is the app icon (rendered from
+`build/icon.html` via an offscreen Electron capture, then `sips`/`iconutil`).
 
 ## How it's wired
 

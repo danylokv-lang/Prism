@@ -1,13 +1,37 @@
 {
   "name": "prism-gui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Prism desktop UI — visual shell, calls the prism CLI for real data.",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder --mac"
   },
   "devDependencies": {
-    "electron": "^31.0.0"
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "dev.danylokv.prism",
+    "productName": "Prism",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dmg"
+      ]
+    },
+    "dmg": {
+      "title": "Prism"
+    }
   }
 }

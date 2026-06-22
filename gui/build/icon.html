@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; }
+  body { width: 1024px; height: 1024px; overflow: hidden; background: transparent; }
+  .canvas {
+    width: 1024px;
+    height: 1024px;
+    border-radius: 225px;
+    background: linear-gradient(135deg, #1a2530 0%, #0a0e14 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .diamond {
+    width: 520px;
+    height: 520px;
+    background: linear-gradient(135deg, #4fe8e8 0%, #1a8f8f 100%);
+    transform: rotate(45deg);
+    border-radius: 56px;
+    box-shadow: 0 0 80px rgba(45, 212, 212, 0.45);
+  }
+</style>
+</head>
+<body>
+  <div class="canvas"><div class="diamond"></div></div>
+</body>
+</html>

@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld("prismAPI", {
   scan: (path) => ipcRenderer.invoke("run-scan", path),
   env: (path) => ipcRenderer.invoke("run-env", path),
   explain: (path) => ipcRenderer.invoke("run-explain", path),
+  checkCli: () => ipcRenderer.invoke("check-cli"),
 });

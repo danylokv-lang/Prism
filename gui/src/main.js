@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("node:path");
-const { runPrism } = require("./prism-runner");
+const { runPrism, checkPrismAvailable } = require("./prism-runner");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -18,6 +18,7 @@ function createWindow() {
   });
 
   win.loadFile(path.join(__dirname, "index.html"));
+  return win;
 }
 
 ipcMain.handle("pick-folder", async () => {
@@ -28,6 +29,7 @@ ipcMain.handle("pick-folder", async () => {
 ipcMain.handle("run-scan", (_event, targetPath) => runPrism(["scan", targetPath, "--json"]));
 ipcMain.handle("run-env", (_event, targetPath) => runPrism(["env", targetPath, "--json"]));
 ipcMain.handle("run-explain", (_event, targetPath) => runPrism(["explain", targetPath, "--json"]));
+ipcMain.handle("check-cli", () => checkPrismAvailable());
 
 app.whenReady().then(createWindow);
 

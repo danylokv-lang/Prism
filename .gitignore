@@ -3,8 +3,8 @@ __pycache__/
 .venv/
 venv/
 *.egg-info/
-dist/
-build/
+/dist/
+/build/
 .DS_Store
 gui/node_modules/
-gui/dist/
+gui/release/
