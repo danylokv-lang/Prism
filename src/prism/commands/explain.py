@@ -4,6 +4,7 @@ references) with an optional AI narrative layered on top."""
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from rich.table import Table
@@ -16,6 +17,56 @@ from prism.core.symbols import extract_symbols
 from prism.ui import console, banner, err, info, warn
 
 MAX_CONTENT_CHARS = 8000
+
+
+def run_json(target: Path) -> None:
+    path = target.resolve()
+    if not path.exists():
+        print(json.dumps({"error": f"{path} does not exist."}))
+        return
+
+    if path.is_dir():
+        print(json.dumps(_folder_data(path)))
+    else:
+        print(json.dumps(_file_data(path)))
+
+
+def _file_data(path: Path) -> dict:
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (UnicodeDecodeError, OSError):
+        return {"kind": "file", "path": str(path), "error": "binary file, nothing readable to explain"}
+
+    symbols = extract_symbols(path, text)
+    refs = find_references(path, Path.cwd())
+    narrative = llm.generate(_file_prompt(path, text, symbols, refs))
+    return {
+        "kind": "file",
+        "path": str(path),
+        "size_chars": len(text),
+        "lines": text.count("\n") + 1,
+        "type": path.suffix.lstrip(".") or "no extension",
+        "symbols": symbols,
+        "references": refs,
+        "ai_explanation": narrative,
+    }
+
+
+def _folder_data(path: Path) -> dict:
+    entries = sorted(path.iterdir())
+    visible = [e for e in entries if e.name not in IGNORE_DIRS and not e.name.startswith(".")]
+    subdirs = [e.name for e in visible if e.is_dir()]
+    files = [e.name for e in visible if e.is_file()]
+    roles = {name: KEY_FILE_ROLES[name] for name in files if name in KEY_FILE_ROLES}
+    narrative = llm.generate(_folder_prompt(path, subdirs, files))
+    return {
+        "kind": "folder",
+        "path": str(path),
+        "subdirs": subdirs,
+        "files": files,
+        "roles": roles,
+        "ai_explanation": narrative,
+    }
 
 
 def run(target: Path) -> None:
@@ -63,20 +114,7 @@ def _explain_file(path: Path) -> None:
             table.add_row(symbol)
         console.print(table)
 
-    prompt = (
-        "You are Prism, a terse code-explanation assistant. Given this file's "
-        "path, symbols, and content, explain in 3-5 sentences: what it does, "
-        "why it likely exists, and how it connects to the rest of the project. "
-        "Be concrete, no fluff, no restating the obvious file name.\n\n"
-        f"Path: {path}\n"
-        f"Top-level symbols: {symbols}\n"
-        f"Referenced by: {refs}\n\n"
-        f"Content:\n{text[:MAX_CONTENT_CHARS]}"
-    )
-    if len(text) > MAX_CONTENT_CHARS:
-        prompt += "\n\n[truncated]"
-
-    _print_narrative(prompt)
+    _print_narrative(_file_prompt(path, text, symbols, refs))
 
 
 def _explain_folder(path: Path) -> None:
@@ -112,16 +150,35 @@ def _explain_folder(path: Path) -> None:
         table.add_row(entry.name, kind, role)
     console.print(table)
 
+    _print_narrative(_folder_prompt(path, [d.name for d in subdirs], [f.name for f in files]))
+
+
+def _file_prompt(path: Path, text: str, symbols: list[str], refs: list[str]) -> str:
     prompt = (
+        "You are Prism, a terse code-explanation assistant. Given this file's "
+        "path, symbols, and content, explain in 3-5 sentences: what it does, "
+        "why it likely exists, and how it connects to the rest of the project. "
+        "Be concrete, no fluff, no restating the obvious file name.\n\n"
+        f"Path: {path}\n"
+        f"Top-level symbols: {symbols}\n"
+        f"Referenced by: {refs}\n\n"
+        f"Content:\n{text[:MAX_CONTENT_CHARS]}"
+    )
+    if len(text) > MAX_CONTENT_CHARS:
+        prompt += "\n\n[truncated]"
+    return prompt
+
+
+def _folder_prompt(path: Path, subdirs: list[str], files: list[str]) -> str:
+    return (
         "You are Prism, a terse code-explanation assistant. Given this "
         "folder's name and contents, explain in 2-4 sentences what role this "
         "folder likely plays in the project's architecture. Be concrete, no "
         "fluff.\n\n"
         f"Folder: {path.name}\n"
-        f"Subfolders: {[d.name for d in subdirs]}\n"
-        f"Files: {[f.name for f in files]}\n"
+        f"Subfolders: {subdirs}\n"
+        f"Files: {files}\n"
     )
-    _print_narrative(prompt)
 
 
 def _print_narrative(prompt: str) -> None:

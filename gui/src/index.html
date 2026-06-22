@@ -40,11 +40,11 @@
   </nav>
 
   <div class="sidebar-footer">
-    <div class="project-card">
-      <span class="project-dot"></span>
+    <div class="project-card" id="project-card" title="Click to choose a project folder">
+      <span class="project-dot" id="project-dot" style="background: var(--dim); box-shadow: none;"></span>
       <div class="project-meta">
-        <span class="project-name">prism</span>
-        <span class="project-sub">Python · CLI</span>
+        <span class="project-name" id="project-name">No project selected</span>
+        <span class="project-sub" id="project-sub">Click to choose a folder</span>
       </div>
     </div>
     <div class="user-row">
@@ -64,93 +64,45 @@
     <section class="view active" id="view-scan">
       <div class="breadcrumb">Project Scan / <b>Full Scan</b></div>
 
-      <div class="command-line mono"><span class="accent">&gt;</span> prism scan --deep --follow-deps</div>
-
-      <div class="terminal mono">
-        <div><span class="t">10:42:11</span><span class="pending">▶</span>Initializing scan engine</div>
-        <div><span class="t">10:42:11</span><span class="ok">✓</span>Loaded configuration <span class="tag">pyproject.toml</span></div>
-        <div><span class="t">10:42:12</span><span class="pending">▶</span>Discovering codebase structure</div>
-        <div><span class="t">10:42:13</span><span class="ok">✓</span>Found <span class="count">214</span> files ( Python <span class="count">142</span>  TOML <span class="count">3</span>  Markdown <span class="count">2</span>  Other <span class="count">67</span> )</div>
-        <div><span class="t">10:42:14</span><span class="pending">▶</span>Analyzing dependencies</div>
-        <div><span class="t">10:42:16</span><span class="ok">✓</span>Resolved <span class="count">9</span> packages ( <span class="warn-icon">0 vulnerabilities</span> )</div>
-        <div><span class="t">10:42:17</span><span class="pending">▶</span>Building code graph</div>
-        <div><span class="t">10:42:22</span><span class="ok">✓</span>Code graph ready ( <span class="count">38</span> nodes  <span class="count">61</span> edges )</div>
-        <div><span class="t">10:42:23</span><span class="pending">▶</span>Running quality checks</div>
-        <div><span class="t">10:42:28</span><span class="warn-icon">⚠</span><span class="tag">4 issues detected</span> ( 1 high  2 medium  1 low )</div>
-        <div><span class="t">10:42:29</span><span class="pending">▶</span>Generating insights</div>
-        <div><span class="t">10:42:31</span><span class="ok">✓</span>Scan complete ( <span class="count">5.1s</span> )</div>
+      <div class="command-line mono" style="display: flex; align-items: center; gap: 12px;">
+        <span style="flex: 1;"><span class="accent">&gt;</span> <span id="scan-command-text">choose a project folder first</span></span>
+        <button class="primary-btn" id="run-scan-btn" style="margin: 0; padding: 5px 12px;">▶ Run Scan</button>
       </div>
 
-      <div class="panel panel-accent">
-        <div class="panel-title"><span>✦</span> AI SUMMARY <span class="badge">BETA</span></div>
-        <div class="summary-text">
-          The codebase is a small, well-organized Typer/Rich CLI with clear command/core separation.
-          A few things stood out:
+      <div id="scan-output">
+        <div class="placeholder">
+          <h2>No project selected</h2>
+          <p>Click the project card in the bottom-left to choose a folder, then run a scan.</p>
         </div>
-        <ul class="bullet-list">
-          <li>Provider abstraction in <span class="mono">llm.py</span> is doing double duty as both config and transport — could split.</li>
-          <li>No automated tests yet for <span class="mono">core/detect.py</span> or <span class="mono">core/tools.py</span>.</li>
-          <li><span class="mono">explain.py</span> reads full file contents into memory — fine at current scale, worth a cap later.</li>
-          <li>Config secrets are stored in plaintext TOML (chmod 600) — acceptable for a local tool, worth documenting.</li>
-        </ul>
-        <a class="see-details">See details →</a>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title" style="color: var(--warn);">⚠ TOP ISSUES</div>
-        <div class="issues-list">
-          <div class="issue-row">
-            <span class="issue-index">1</span>
-            <span class="severity high">High</span>
-            <span class="issue-text">No test suite — <span class="path">tests/</span> directory doesn't exist yet</span>
-          </div>
-          <div class="issue-row">
-            <span class="issue-index">2</span>
-            <span class="severity medium">Medium</span>
-            <span class="issue-text">Plaintext API keys in <span class="path">~/.prism/config.toml</span></span>
-          </div>
-          <div class="issue-row">
-            <span class="issue-index">3</span>
-            <span class="severity medium">Medium</span>
-            <span class="issue-text">Unbounded file read in <span class="path">commands/explain.py:38</span></span>
-          </div>
-        </div>
-        <div class="view-all">View all issues (4) →</div>
-      </div>
-
-      <div class="command-bar mono">
-        <span class="accent">&gt;</span>
-        <input type="text" placeholder="Type a command or ask anything..." />
-        <span class="kbd">⌘K</span>
-        <div class="send-btn">→</div>
       </div>
     </section>
 
     <!-- Explain -->
     <section class="view" id="view-explain">
       <div class="breadcrumb">Explain / <b>Codebase Q&amp;A</b></div>
-      <div class="qa-thread">
-        <div class="qa-bubble user">What does core/symbols.py do?</div>
-        <div class="qa-bubble ai">It extracts top-level function and class names from a file without calling an LLM — AST for Python, regex heuristics for everything else. Used by <span class="mono">prism explain</span> to show real symbols before the AI narrative.</div>
+      <div class="qa-thread" id="explain-thread">
+        <div class="qa-bubble ai">Choose a project folder, then type a file or folder path (relative to it) below and press Enter.</div>
       </div>
       <div class="command-bar mono">
         <span class="accent">&gt;</span>
-        <input type="text" placeholder="Ask about this codebase..." />
-        <span class="kbd">⌘K</span>
-        <div class="send-btn">→</div>
+        <input type="text" id="explain-input" placeholder="e.g. src/prism/llm.py" />
+        <span class="kbd">⏎</span>
+        <div class="send-btn" id="explain-send-btn">→</div>
       </div>
     </section>
 
     <!-- Env -->
     <section class="view" id="view-env">
       <div class="breadcrumb">Environment / <b>Tool Audit</b></div>
-      <div class="env-table mono">
-        <div class="env-row head"><span></span><span>Tool</span><span>Version</span><span>Notes</span></div>
-        <div class="env-row"><span class="env-ok">✓</span><span>git</span><span>2.50.1</span><span></span></div>
-        <div class="env-row"><span class="env-ok">✓</span><span>python3</span><span>3.9.6</span><span>required by this project</span></div>
-        <div class="env-row"><span class="env-ok">✓</span><span>node</span><span>25.8.1</span><span></span></div>
-        <div class="env-row"><span class="env-missing">·</span><span>rustc</span><span>not found</span><span>not used here</span></div>
-        <div class="env-row"><span class="env-ok">✓</span><span>docker</span><span>29.3.1</span><span></span></div>
+      <div class="command-line mono" style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <span style="flex: 1;"><span class="accent">&gt;</span> <span id="env-command-text">choose a project folder first</span></span>
+        <button class="primary-btn" id="run-env-btn" style="margin: 0; padding: 5px 12px;">▶ Run Audit</button>
+      </div>
+      <div id="env-output">
+        <div class="placeholder">
+          <h2>No project selected</h2>
+          <p>Click the project card in the bottom-left to choose a folder, then run an audit.</p>
+        </div>
       </div>
     </section>
 
@@ -182,39 +134,25 @@
     <div class="ai-context-header">AI CONTEXT <span class="badge">BETA</span></div>
 
     <div class="panel">
-      <div class="metric-row">
+      <div class="metric-row" id="scan-summary-metrics">
         <span class="lead">Scan Summary</span>
-        <span>214 files analyzed in 5.1s</span>
-        <span>0 dependency vulnerabilities</span>
-        <span>4 code issues found</span>
-        <span>Main language: Python</span>
+        <span>Run a scan to see metrics</span>
       </div>
     </div>
 
     <div class="panel">
       <div class="metric-row">
-        <span class="lead">Key Insights</span>
+        <span class="lead">Key Files</span>
       </div>
-      <ul class="bullet-list">
-        <li>No test suite present</li>
-        <li>Secrets stored in plaintext config</li>
-        <li>Provider abstraction doing two jobs</li>
+      <ul class="bullet-list" id="key-files-list">
+        <li>Run a scan to see key files</li>
       </ul>
     </div>
 
     <div class="panel">
-      <div class="metric-row" style="margin-bottom: 4px;"><span class="lead">Suggested Actions</span></div>
-      <div class="action-btn">🧪 Add a test suite <span class="chev">›</span></div>
-      <div class="action-btn">🔒 Review config security <span class="chev">›</span></div>
-      <div class="action-btn">🧹 Split provider abstraction <span class="chev">›</span></div>
-    </div>
-
-    <div>
-      <div class="metric-row" style="margin-bottom: 8px;"><span class="lead">Ask Prism anything…</span></div>
-      <div class="chip-row">
-        <div class="chip">Explain this module</div>
-        <div class="chip">Why is this slow?</div>
-      </div>
+      <div class="metric-row" style="margin-bottom: 4px;"><span class="lead">Shortcuts</span></div>
+      <div class="action-btn" data-nav="explain">💬 Explain a file <span class="chev">›</span></div>
+      <div class="action-btn" data-nav="env">🌐 Audit environment <span class="chev">›</span></div>
     </div>
   </aside>
 </div>

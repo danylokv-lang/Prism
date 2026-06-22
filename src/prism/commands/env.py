@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from rich.table import Table
@@ -9,6 +10,25 @@ from rich.table import Table
 from prism.config import is_configured
 from prism.core.tools import run_checks
 from prism.ui import console, banner, ok, warn, err, info
+
+
+def run_json(path: Path) -> None:
+    root = path.resolve()
+    checks = run_checks(root)
+    print(json.dumps({
+        "root": str(root),
+        "checks": [
+            {
+                "name": c.name,
+                "found": c.found,
+                "version": c.version,
+                "required_by": c.required_by,
+                "fix_hint": c.fix_hint,
+            }
+            for c in checks
+        ],
+        "ai_configured": is_configured(),
+    }))
 
 
 def run(path: Path) -> None:

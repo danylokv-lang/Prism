@@ -29,4 +29,6 @@ pip install -e .
 
 Run `prism setup` first — everything else falls back to structural-only output if no AI provider is configured.
 
+Add `--json` to `scan`, `env`, or `explain` for structured output instead of formatted terminal output — used by [`gui/`](gui/), the Electron desktop shell.
+
 More commands (`debug`, `recipe`, `init`) are planned.

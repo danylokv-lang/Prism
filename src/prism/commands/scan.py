@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from rich.table import Table
@@ -10,6 +11,22 @@ from rich.panel import Panel
 from prism import llm
 from prism.core.detect import detect_project
 from prism.ui import console, banner, info, warn
+
+
+def run_json(path: Path) -> None:
+    root = path.resolve()
+    summary = detect_project(root)
+    narrative = llm.generate(_narrative_prompt(summary))
+    print(json.dumps({
+        "root": str(root),
+        "project_types": summary.project_types,
+        "tech_stack": summary.tech_stack,
+        "file_count": summary.file_count,
+        "languages": summary.languages,
+        "top_level_dirs": summary.top_level_dirs,
+        "key_files": summary.key_files,
+        "ai_summary": narrative,
+    }))
 
 
 def run(path: Path) -> None:
@@ -45,8 +62,8 @@ def run(path: Path) -> None:
     _print_narrative(summary)
 
 
-def _print_narrative(summary) -> None:
-    prompt = (
+def _narrative_prompt(summary) -> str:
+    return (
         "You are Prism, a terse project-intelligence assistant. Given this "
         "project metadata, write a 3-5 sentence plain-English architecture "
         "summary a new contributor would find useful. Be concrete, no fluff.\n\n"
@@ -57,8 +74,10 @@ def _print_narrative(summary) -> None:
         f"Languages by file count: {summary.languages}\n"
     )
 
+
+def _print_narrative(summary) -> None:
     with console.status("[prism.accent]Asking local model for a summary...[/prism.accent]"):
-        narrative = llm.generate(prompt)
+        narrative = llm.generate(_narrative_prompt(summary))
 
     if narrative:
         console.print(Panel(narrative, title="AI Summary", border_style="cyan"))

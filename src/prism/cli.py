@@ -36,25 +36,37 @@ app = typer.Typer(
 @app.command()
 def scan(
     path: Path = typer.Argument(Path("."), help="Path to the project to scan."),
+    json_out: bool = typer.Option(False, "--json", help="Print structured JSON instead of formatted output."),
 ) -> None:
     """Analyze the current project and produce a structural + AI summary."""
-    scan_cmd.run(path)
+    if json_out:
+        scan_cmd.run_json(path)
+    else:
+        scan_cmd.run(path)
 
 
 @app.command()
 def env(
     path: Path = typer.Argument(Path("."), help="Path to the project to audit against."),
+    json_out: bool = typer.Option(False, "--json", help="Print structured JSON instead of formatted output."),
 ) -> None:
     """Audit your local dev environment against this project's requirements."""
-    env_cmd.run(path)
+    if json_out:
+        env_cmd.run_json(path)
+    else:
+        env_cmd.run(path)
 
 
 @app.command()
 def explain(
     path: Path = typer.Argument(..., help="File or folder to explain."),
+    json_out: bool = typer.Option(False, "--json", help="Print structured JSON instead of formatted output."),
 ) -> None:
     """Explain what a file or folder does, why it exists, and how it connects."""
-    explain_cmd.run(path)
+    if json_out:
+        explain_cmd.run_json(path)
+    else:
+        explain_cmd.run(path)
 
 
 @app.command()

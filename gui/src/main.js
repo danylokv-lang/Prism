@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("node:path");
+const { runPrism } = require("./prism-runner");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -12,11 +13,21 @@ function createWindow() {
     trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
       contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
   win.loadFile(path.join(__dirname, "index.html"));
 }
+
+ipcMain.handle("pick-folder", async () => {
+  const result = await dialog.showOpenDialog({ properties: ["openDirectory"] });
+  return result.canceled ? null : result.filePaths[0];
+});
+
+ipcMain.handle("run-scan", (_event, targetPath) => runPrism(["scan", targetPath, "--json"]));
+ipcMain.handle("run-env", (_event, targetPath) => runPrism(["env", targetPath, "--json"]));
+ipcMain.handle("run-explain", (_event, targetPath) => runPrism(["explain", targetPath, "--json"]));
 
 app.whenReady().then(createWindow);
 
