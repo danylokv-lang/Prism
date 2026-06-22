@@ -12,8 +12,10 @@ pip install -e .
 
 ## Commands
 
-- `prism scan` — analyze the current project's structure and stack, with an optional AI-generated narrative summary if [Ollama](https://ollama.com) is running.
-- `prism env` — audit installed dev tools against what this project needs, with install hints for anything missing.
+- `prism setup` — pick and configure an AI provider (local Ollama, Anthropic, or OpenAI). Detects what you already have and lets you keep or change it.
+- `prism scan [path]` — analyze a project's structure and stack, with an AI-generated narrative summary if a provider is configured.
+- `prism env [path]` — audit installed dev tools against what the project needs, with install hints for anything missing.
+
+Run `prism setup` first — everything else falls back to structural-only output if no AI provider is configured.
 
 More commands (`explain`, `debug`, `recipe`, `init`) are planned.
-# Prism
